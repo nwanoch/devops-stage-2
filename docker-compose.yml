@@ -15,7 +15,7 @@ services:
       context: ./frontend
     container_name: frontend
     environment:
-      - REACT_APP_API_URL=/api
+      - VITE_API_URL=/api
     volumes:
       - frontend-build:/usr/share/nginx/html
 

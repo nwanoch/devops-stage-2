@@ -18,10 +18,5 @@ RUN npm run build
 
 # Use a lightweight web server to serve the built static files
 FROM nginx:alpine
-COPY --from=0 /app/dist /usr/share/nginx/html
-
-# Expose port 80 to the outside world
-EXPOSE 80
-
-# Command to run the web server
-CMD ["nginx", "-g", "daemon off;"]
+COPY --from=build-stage /app/dist /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/nginx.conf

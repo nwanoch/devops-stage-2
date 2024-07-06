@@ -1,16 +1,27 @@
-# Stage 1: Build the application
-FROM node:18.20.0 as build-stage
+# Use an appropriate base image with Node.js installed
+FROM node:18-alpine
 
-COPY . /app
-
+# Set the working directory inside the container
 WORKDIR /app
 
-RUN npm install 
+# Copy package.json and package-lock.json to install dependencies
+COPY package.json package-lock.json ./
 
+# Install dependencies using npm
+RUN npm install
+
+# Copy the rest of the application code
+COPY . .
+
+# Build the Vite application
 RUN npm run build
 
-# Stage 2: Serve app with Nginx server
-FROM nginx:1.19.6
+# Use a lightweight web server to serve the built static files
+FROM nginx:alpine
+COPY --from=0 /app/dist /usr/share/nginx/html
 
-COPY --from=build-stage /app/dist /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/nginx.conf
+# Expose port 80 to the outside world
+EXPOSE 80
+
+# Command to run the web server
+CMD ["nginx", "-g", "daemon off;"]

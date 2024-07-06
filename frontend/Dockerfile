@@ -1,26 +1,25 @@
-# Use an appropriate base image with Node.js installed
+# Stage 1: Build Vite application
 FROM node:18-alpine AS build-stage
 
-# Set the working directory inside the container
 WORKDIR /app
 
-# Copy package.json and package-lock.json to install dependencies
 COPY package.json package-lock.json ./
-
-# Install dependencies using npm
 RUN npm install
 
-# Copy the rest of the application code
 COPY . .
-
-# Build the Vite application
 RUN npm run build
 
-# Use a lightweight web server to serve the built static files
+# Stage 2: Serve built files with nginx
 FROM nginx:alpine
 
-# Copy the built files from the build stage
+# Copy nginx configuration
+COPY nginx.conf /etc/nginx/nginx.conf
+
+# Copy built files from previous stage
 COPY --from=build-stage /app/dist /usr/share/nginx/html
 
-# Copy the Nginx configuration file
-COPY nginx.conf /etc/nginx/nginx.conf
+# Expose port 80
+EXPOSE 80
+
+# Start nginx when container starts
+CMD ["nginx", "-g", "daemon off;"]

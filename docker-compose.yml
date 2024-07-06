@@ -16,9 +16,6 @@ services:
     container_name: frontend
     environment:
       - VITE_API_URL=https://api.gurustech.io
-    command: ["sh", "-c", "npm run build && cp -r dist/* /usr/share/nginx/html"]
-    volumes:
-      - /usr/share/nginx/html
 
   nginx:
     image: nginx:latest

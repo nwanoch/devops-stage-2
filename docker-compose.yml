@@ -14,8 +14,6 @@ services:
     build:
       context: ./frontend
     container_name: frontend
-    environment:
-      - VITE_API_URL=https://gurustech.io/api
     volumes:
       - frontend-build:/usr/share/nginx/html
 

@@ -1,5 +1,5 @@
 # Use an appropriate base image with Node.js installed
-FROM node:18-alpine
+FROM node:18-alpine AS build-stage
 
 # Set the working directory inside the container
 WORKDIR /app
@@ -18,5 +18,9 @@ RUN npm run build
 
 # Use a lightweight web server to serve the built static files
 FROM nginx:alpine
+
+# Copy the built files from the build stage
 COPY --from=build-stage /app/dist /usr/share/nginx/html
+
+# Copy the Nginx configuration file
 COPY nginx.conf /etc/nginx/nginx.conf

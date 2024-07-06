@@ -14,10 +14,11 @@ services:
     build:
       context: ./frontend
     container_name: frontend
-    env_file:
-      - ./frontend/.env
+    environment:
+      - VITE_API_URL=https://api.gurustech.io
+    command: ["sh", "-c", "npm run build && cp -r dist/* /usr/share/nginx/html"]
     volumes:
-      - frontend-build:/usr/share/nginx/html
+      - /usr/share/nginx/html
 
   nginx:
     image: nginx:latest

@@ -9,13 +9,13 @@ COPY package.json .
 # Adjust if using npm (COPY package-lock.json .)
 
 # Install dependencies without the lock file
-RUN npm install  # Adjust if using npm (RUN npm install)
+RUN npm install  
 
 # Copy the entire project from your repository
 COPY . .
 
 # Build the React application with Vite
-RUN npm build
+RUN npm run build
 
 # Stage 2 - Serve the built application with a lightweight HTTP Server
 FROM nginx:alpine

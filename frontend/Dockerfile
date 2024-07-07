@@ -1,27 +1,32 @@
-# Use an appropriate base image with Node.js installed
-FROM node:18-alpine
+# Use Node.js LTS image as the base
+FROM node:lts-alpine as build
 
-# Set the working directory inside the container
+# Set working directory inside the container
 WORKDIR /app
 
-# Copy package.json and package-lock.json to install dependencies
-COPY package.json package-lock.json ./
+# Copy package.json and yarn.lock (or package-lock.json if using npm)
+COPY package.json yarn.lock ./
 
-# Install dependencies using npm
-RUN npm install
+# Install dependencies
+RUN yarn install --frozen-lockfile
 
-# Copy the rest of the application code
+# Copy the entire project
 COPY . .
 
-# Build the Vite application
-RUN npm run build
+# Build the React application with Vite
+RUN yarn build
 
-# Use a lightweight web server to serve the built static files
+# Stage 2 - Serve the built application with a lightweight HTTP Server
 FROM nginx:alpine
-COPY --from=0 /app/dist /usr/share/nginx/html
 
-# Expose port 80 to the outside world
+# Copy the built artifacts from the build stage
+COPY --from=build /app/dist /usr/share/nginx/html
+
+# Copy nginx configuration file if needed (optional)
+# COPY nginx/nginx.conf /etc/nginx/nginx.conf
+
+# Expose port 80
 EXPOSE 80
 
-# Command to run the web server
+# Start nginx server
 CMD ["nginx", "-g", "daemon off;"]

@@ -4,13 +4,14 @@ FROM node:lts-alpine as build
 # Set working directory inside the container
 WORKDIR /app
 
-# Copy package.json and yarn.lock (or package-lock.json if using npm)
-COPY package.json yarn.lock ./
+# Copy package.json (and if using npm, package-lock.json) from your repository
+COPY package.json . 
+# Adjust if using npm (COPY package-lock.json .)
 
-# Install dependencies
-RUN yarn install --frozen-lockfile
+# Install dependencies without the lock file
+RUN yarn install  # Adjust if using npm (RUN npm install)
 
-# Copy the entire project
+# Copy the entire project from your repository
 COPY . .
 
 # Build the React application with Vite
@@ -21,9 +22,6 @@ FROM nginx:alpine
 
 # Copy the built artifacts from the build stage
 COPY --from=build /app/dist /usr/share/nginx/html
-
-# Copy nginx configuration file if needed (optional)
-# COPY nginx/nginx.conf /etc/nginx/nginx.conf
 
 # Expose port 80
 EXPOSE 80

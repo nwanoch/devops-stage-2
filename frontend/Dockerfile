@@ -1,30 +1,16 @@
-# Use Node.js LTS image as the base
-FROM node:lts-alpine as build
+# Stage 1: Build the application
+FROM node:18.20.0 as build-stage
 
-# Set working directory inside the container
+COPY . /app
+
 WORKDIR /app
 
-# Copy package.json (and if using npm, package-lock.json) from your repository
-COPY package.json . 
-# Adjust if using npm (COPY package-lock.json .)
+RUN npm install -f
 
-# Install dependencies without the lock file
-RUN npm install  
-
-# Copy the entire project from your repository
-COPY . .
-
-# Build the React application with Vite
 RUN npm run build
 
-# Stage 2 - Serve the built application with a lightweight HTTP Server
-FROM nginx:alpine
+# Stage 2: Serve app with Nginx server
+FROM nginx:1.19.6
 
-# Copy the built artifacts from the build stage
-COPY --from=build /app/dist /usr/share/nginx/html
-
-# Expose port 80
-EXPOSE 80
-
-# Start nginx server
-CMD ["nginx", "-g", "daemon off;"]
+COPY --from=build-stage /app/dist /usr/share/nginx/html
+COPY ./frontend/nginx.conf /etc/nginx/nginx.conf

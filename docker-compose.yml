@@ -5,10 +5,6 @@ services:
     build:
       context: ./backend
     container_name: backend
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: postgres
     env_file:
       - ./backend/.env
     depends_on:
@@ -38,8 +34,10 @@ services:
     container_name: db
     ports:
       - "5432:5432"
-    env_file:
-      - ./backend/.env
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
     volumes:
       - postgres-data:/var/lib/postgresql/data
 

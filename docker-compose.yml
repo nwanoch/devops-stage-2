@@ -61,6 +61,6 @@ services:
       - npm-letsencrypt:/etc/letsencrypt
 
 volumes:
-  postgres-data:
+  db-data:
   npm-data:
   npm-letsencrypt:
